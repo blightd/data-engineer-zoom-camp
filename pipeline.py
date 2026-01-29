@@ -9,3 +9,5 @@ print(df.head())
 
 df.to_parquet(f"output_day_{day}.parquet")
 print(f"Running pipeline for day {day}")
+
+# new confiles are add
