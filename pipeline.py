@@ -8,4 +8,10 @@ df['day'] = day
 print(df.head())
 
 df.to_parquet(f"output_day_{day}.parquet")
+<<<<<<< HEAD
 print(f"Running pipeline for day {day}")
+=======
+print(f"Running pipeline for day {day}")
+
+# new confiles are add
+>>>>>>> pipeline_branch_2
