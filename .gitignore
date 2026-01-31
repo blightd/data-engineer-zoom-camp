@@ -2,7 +2,7 @@
 output_day_10.parquet
 =======
 *.parquet
-
+*.ipynb
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -211,3 +211,4 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 >>>>>>> pipeline_branch_2
+taxi_data.py
