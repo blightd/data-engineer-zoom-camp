@@ -27,9 +27,6 @@ parse_dates = [
     "tpep_dropoff_datetime"
 ]
 
-
-def run():
-
 @click.command()
 @click.option('--pg-user', default='root', help='PostgreSQL user')
 @click.option('--pg-pass', default='root', help='PostgreSQL password')

@@ -10,6 +10,6 @@ COPY "pyproject.toml" "uv.lock" ".python-version" ./
 
 RUN uv sync --locked
 
-COPY pipeline.py ./
+COPY taxi_data.py ./
 
-ENTRYPOINT [ "python3", "pipeline.py" ]
+ENTRYPOINT [ "python3", "taxi_data.py" ]
