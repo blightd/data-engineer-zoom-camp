@@ -1,18 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import pandas as pd
 from tqdm.auto import tqdm
 from sqlalchemy import create_engine
-
-year = 2021
-month = 1
-pd.__file__
-prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
-url = (f"{prefix}yellow_tripdata_{year}-{month:02d}.csv.gz")
-url
-
-df = pd.read_csv(url)
 
 dtype = {
     "VendorID": "Int64",
@@ -38,40 +26,42 @@ parse_dates = [
     "tpep_dropoff_datetime"
 ]
 
-df = pd.read_csv(
-    url,
-    dtype=dtype,
-    parse_dates=parse_dates
-)
 
-get_ipython().system('uv add sqlalchemy')
+def run():
 
-get_ipython().system('uv add psycopg --binary')
+    pg_user = 'root'
+    pg_pass = 'root'
+    pg_host ='localhost'
+    pg_db = 'ny_taxi'
+    pg_port = 5432
 
+    year = 2021
+    month = 1
 
-engine = create_engine('postgresql://root:root@localhost:5432/ny_taxi')
+    chunksize = 100000
+    target_table = 'yellow_taxi_data'
 
-get_ipython().system('uv add psycopg2 --binary')
+    prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
+    url = (f"{prefix}yellow_tripdata_{year}-{month:02d}.csv.gz")
 
-print(pd.io.sql.get_schema(df, name='yellow_taxi_data', con=engine))
+    engine = create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
 
-df.head(n=0).to_sql(name='yellow_taxi_data', con=engine, if_exists='replace')
+    df_iter = pd.read_csv(
+        url,
+        dtype=dtype,
+        parse_dates=parse_dates,
+        iterator = True,
+        chunksize = chunksize,
+    )
 
-df_iter = pd.read_csv(
-    url,
-    dtype=dtype,
-    parse_dates=parse_dates,
-    iterator = True,
-    chunksize = 100000,
-)
+    first = True
+    for df_chunk in tqdm(df_iter):
+        if first:
+            df_chunk.head(0).to_sql(name=target_table, con=engine, if_exists='replace')
+            first=False
+        df_chunk.to_sql(name=target_table,con=engine, if_exists = 'append')
 
-get_ipython().system('uv add tqdm')
-
-
-
-for df_chunk in tqdm(df_iter):
-    df_chunk.to_sql(name='yellow_taxi_data',con=engine, if_exists = 'append')
-
-
+if __name__ == '__main__':
+    run()
 
 
